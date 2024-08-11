@@ -16,6 +16,8 @@ class SpeedometerBloc extends Bloc<SpeedometerEvent, SpeedometerState> {
     on<GetSpeedometerData>(_onGetSpeedometerData);
     on<RequestLocationPermissions>(_onRequestLocationPermissions);
     on<LoadSpeedometer>(_onLoadSpeedometer);
+    on<SpeedChanged>(_onSpeedChanged);
+    on<SpeedometerErrorEvent>(_onSpeedometerErrorEvent);
 
     if (state is SpeedometerInitial) {
       add(const LoadSpeedometer());
@@ -29,15 +31,23 @@ class SpeedometerBloc extends Bloc<SpeedometerEvent, SpeedometerState> {
     if (_positionStream != null) {
       return;
     }
-    final positionStream = _geolocationRepository.getPositionStream();
-    _positionStream = positionStream.listen((position) {
-      emit(SpeedometerData(speed: position.speed));
-    }, onError: (e) {
+    try {
+      final positionStream = _geolocationRepository.getPositionStream();
+      add(const SpeedChanged(speed: 0));
+      _positionStream = positionStream.listen((position) {
+        add(SpeedChanged(speed: position.speed));
+      }, onError: (e) {
+        add(SpeedometerErrorEvent(error: e));
+      });
+    } catch (e) {
       emit(SpeedometerError(error: e.toString()));
-    });
+    }
   }
 
   FutureOr<void> _onRequestLocationPermissions(RequestLocationPermissions event, Emitter<SpeedometerState> emit) async {
+    if (state is! DeniedLocationPermissions) {
+      return;
+    }
     try {
       await _geolocationRepository.checkPermissions();
       add(const GetSpeedometerData());
@@ -58,6 +68,16 @@ class SpeedometerBloc extends Bloc<SpeedometerEvent, SpeedometerState> {
     } on Exception catch (e) {
       emit(SpeedometerError(error: e.toString()));
     }
+  }
+
+  FutureOr<void> _onSpeedChanged(event, Emitter<SpeedometerState> emit) {
+    if (event is SpeedChanged) {
+      emit(SpeedometerData(speed: event.speed));
+    }
+  }
+
+  FutureOr<void> _onSpeedometerErrorEvent(SpeedometerErrorEvent event, Emitter<SpeedometerState> emit) {
+    emit(SpeedometerError(error: event.error.toString()));
   }
 
   @override
