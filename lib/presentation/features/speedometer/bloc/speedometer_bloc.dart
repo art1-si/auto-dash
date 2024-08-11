@@ -41,7 +41,7 @@ class SpeedometerBloc extends Bloc<SpeedometerEvent, SpeedometerState> {
           ),
         ),
       );
-      await simulateAcceleration();
+      // await simulateAcceleration();
       _positionStream = positionStream.listen((position) {
         add(SpeedChanged(speed: Speed.fromMeterPerSecond(position.speed)));
       }, onError: (e) {

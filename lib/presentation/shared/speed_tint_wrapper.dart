@@ -15,9 +15,9 @@ class SpeedTintWrapper extends StatelessWidget {
     final kmPerHour = speed.kilometersPerHour;
 
     final firstColor = Color.fromARGB(255, 58, 255, 61);
-    final firstColorMaxOpacity = 0.05;
+    final firstColorMaxOpacity = 0.02;
     final secondColor = Colors.red;
-    final secondColorMaxOpacity = 0.05;
+    final secondColorMaxOpacity = 0.02;
 
     if (kmPerHour <= 100) {
       // For speed from 0 to 100, transition opacity from 0 to 0.1 (10%)
