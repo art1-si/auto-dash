@@ -17,7 +17,7 @@ final class SpeedometerData extends SpeedometerState {
     required this.speed,
   });
 
-  final double speed;
+  final Speed speed;
 }
 
 final class LoadingSpeedometerData extends SpeedometerState {

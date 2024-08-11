@@ -9,12 +9,17 @@ class AutoDashApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BlocProvider(
-        create: (context) => SpeedometerBloc(
-          geolocationRepository: GeolocatorRepository(),
+    return BlocProvider(
+      create: (context) => SpeedometerBloc(
+        geolocationRepository: GeolocatorRepository(),
+      ),
+      child: MaterialApp(
+        home: BlocProvider(
+          create: (context) => SpeedometerBloc(
+            geolocationRepository: GeolocatorRepository(),
+          ),
+          child: HomeScreen(),
         ),
-        child: HomeScreen(),
       ),
     );
   }

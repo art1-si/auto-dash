@@ -21,7 +21,7 @@ final class SpeedChanged extends SpeedometerEvent {
     required this.speed,
   });
 
-  final double speed;
+  final Speed speed;
 }
 
 final class SpeedometerErrorEvent extends SpeedometerEvent {

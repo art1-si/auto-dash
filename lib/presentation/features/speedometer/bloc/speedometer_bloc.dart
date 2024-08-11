@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_dash/domain/exceptions/geolocation_exception.dart';
 import 'package:auto_dash/domain/repositories/geolocator_repository.dart';
+import 'package:auto_dash/presentation/features/speedometer/models/speed.dart';
 import 'package:bloc/bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -33,14 +34,28 @@ class SpeedometerBloc extends Bloc<SpeedometerEvent, SpeedometerState> {
     }
     try {
       final positionStream = _geolocationRepository.getPositionStream();
-      add(const SpeedChanged(speed: 0));
+      add(
+        SpeedChanged(
+          speed: Speed.fromMeterPerSecond(
+            0,
+          ),
+        ),
+      );
+      await simulateAcceleration();
       _positionStream = positionStream.listen((position) {
-        add(SpeedChanged(speed: position.speed));
+        add(SpeedChanged(speed: Speed.fromMeterPerSecond(position.speed)));
       }, onError: (e) {
         add(SpeedometerErrorEvent(error: e));
       });
     } catch (e) {
       emit(SpeedometerError(error: e.toString()));
+    }
+  }
+
+  Future<void> simulateAcceleration() async {
+    for (var i = 0; i < 100; i++) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      add(SpeedChanged(speed: Speed.fromMeterPerSecond(i.toDouble())));
     }
   }
 

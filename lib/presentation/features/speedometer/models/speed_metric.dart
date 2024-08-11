@@ -1,0 +1,4 @@
+enum SpeedMetric {
+  kmPerHour,
+  milesPerHour;
+}
